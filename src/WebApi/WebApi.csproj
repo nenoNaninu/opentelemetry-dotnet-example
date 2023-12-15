@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <InvariantGlobalization>true</InvariantGlobalization>
+        <UserSecretsId>901bcbbd-aba6-457c-a476-33e32987d6a0</UserSecretsId>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+        <DockerfileContext>..\..</DockerfileContext>
+        <DockerComposeProjectPath>..\..\docker-compose.dcproj</DockerComposeProjectPath>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Google.Protobuf" Version="3.25.1" />
+        <PackageReference Include="Grpc.Net.ClientFactory" Version="2.59.0" />
+        <PackageReference Include="Grpc.Tools" Version="2.59.0">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.5" />
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+        <PackageReference Include="AspNetCore.SignalR.OpenTelemetry" Version="0.1.1" />
+        <PackageReference Include="Npgsql.DependencyInjection" Version="8.0.1" />
+        <PackageReference Include="Dapper" Version="2.1.24" />
+        <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.6.0" />
+        <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.6.0" />
+        <PackageReference Include="OpenTelemetry.Instrumentation.Runtime" Version="1.5.1" />
+        <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.6.0-beta.3" />
+        <PackageReference Include="OpenTelemetry.Instrumentation.GrpcNetClient" Version="1.6.0-beta.3" />
+        <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.6.0-beta.3" />
+        <PackageReference Include="OpenTelemetry.Instrumentation.StackExchangeRedis" Version="1.0.0-rc9.12" />
+        <PackageReference Include="Npgsql.OpenTelemetry" Version="7.0.6" />
+        <PackageReference Include="OpenTelemetry.Exporter.Console" Version="1.6.0" />
+        <PackageReference Include="TypedSignalR.Client.DevTools" Version="1.2.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Protobuf Include="..\GrpcService\Protos\greet.proto" GrpcServices="Client" />
+    </ItemGroup>
+
+</Project>

@@ -1,0 +1,108 @@
+version: '3.4'
+
+services:
+  # webapi:
+  #   image: ${DOCKER_REGISTRY-}webapi
+  #   build:
+  #     context: .
+  #     dockerfile: src/WebApi/Dockerfile
+  #   depends_on:
+  #     - otel-collector
+      
+  grpcservice:
+    image: ${DOCKER_REGISTRY-}grpcservice
+    build:
+      context: .
+      dockerfile: src/GrpcService/Dockerfile
+    ports:
+     - "8080:8080"
+     - "8081:8081"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.90.1
+    restart: always
+    command: ["--config=/etc/otel-collector.yml"]
+    volumes:
+      - ./containers/opentelemetry/otel-collector.yml:/etc/otel-collector.yml
+    ports:
+      - "1888:1888"   # pprof extension
+      - "8888:8888"   # Prometheus metrics exposed by the collector
+      - "8889:8889"   # Prometheus exporter metrics
+      - "13133:13133" # health_check extension
+      - "4317:4317"   # OTLP gRPC receiver
+      - "4318:4318"   # OTLP HTTP receiver
+      - "55679:55679" # zpages extension
+    depends_on:
+      - tempo
+      - loki
+
+  prometheus:
+    image: prom/prometheus:v2.47.2
+    volumes:
+      - ./containers/prometheus-data/:/prometheus-data
+    command:
+      - '--config.file=/prometheus-data/prometheus.yml'
+      - --enable-feature=remote-write-receiver
+    ports:
+      - 9090:9090
+    depends_on:
+      - otel-collector
+
+  # To eventually offload to Tempo...
+  tempo:
+    image: grafana/tempo:2.3.0
+    command: [ "-config.file=/etc/tempo.yml" ]
+    volumes:
+      - ./containers/tempo/tempo.yml:/etc/tempo.yml
+    ports:
+      - "3200"  # tempo
+      - "4317"  # otlp grpc
+
+  grafana:
+    image: grafana/grafana:10.2.2-ubuntu
+    volumes:
+      - ./containers/grafana/provisioning/datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml
+      - ./containers/grafana/provisioning/dashboards.yml:/etc/grafana/provisioning/dashboards/dashboards.yml
+      - ./containers/grafana/dashboards/export:/var/lib/grafana/dashboards
+    ports: 
+      - 3000:3000
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_AUTH_DISABLE_LOGIN_FORM=true
+      - GF_FEATURE_TOGGLES_ENABLE=traceqlEditor
+    depends_on:
+      - prometheus
+      - tempo
+      - loki
+
+  loki:
+    image: grafana/loki:2.9.2
+    ports:
+      - "3100:3100"
+
+  postgres:
+    image: postgres:16
+    user: root
+    container_name: postgres
+    environment:
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - 5432:5432
+    healthcheck:
+      test: ["CMD", "pg_isready", "-h", "localhost", "-p", "5432"]
+      timeout: 60s
+      retries: 5
+
+  redis:
+    image: redis:7.2.3
+    container_name: redis
+    ports:
+      - 6379:6379
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      timeout: 60s
+      retries: 5
+

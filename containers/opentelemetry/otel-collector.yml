@@ -1,0 +1,44 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+      http:
+
+exporters:
+  prometheus:
+    endpoint: "0.0.0.0:8889"
+  otlp:
+    endpoint: tempo:4317
+    tls:
+      insecure: true
+  debug:
+  loki:
+    endpoint: "http://loki:3100/loki/api/v1/push"
+    tls:
+      insecure: true
+
+processors:
+  batch:
+
+extensions:
+  health_check:
+  pprof:
+    endpoint: :1888
+  zpages:
+    endpoint: :55679
+
+service:
+  extensions: [pprof, zpages, health_check]
+  pipelines:
+    traces:
+      receivers: [otlp]
+      # processors: [batch]
+      exporters: [otlp, debug]
+    metrics:
+      receivers: [otlp]
+      # processors: [batch]
+      exporters: [prometheus, debug]
+    logs:
+      receivers: [otlp]
+      # processors: [batch]
+      exporters: [loki, debug]
