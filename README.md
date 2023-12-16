@@ -8,6 +8,10 @@
 ## スライド
 
 
+
+[![](https://github.com/nenoNaninu/opentelemetry-dotnet-example/assets/27144255/8e2d5652-308b-4a3b-967b-e7444f1a77b5)](https://speakerdeck.com/nenonaninu/c-number-dehazimeru-opentelemetry)
+
+
 ## 動かし方
 
 docker compose で Opentelemetry Collector とか Grafana とかいろいろ立ち上げます。
