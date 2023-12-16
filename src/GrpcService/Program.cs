@@ -1,6 +1,7 @@
 using GrpcService.Services;
 using Microsoft.AspNetCore.HttpLogging;
 using Npgsql;
+using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
@@ -18,6 +19,27 @@ builder.Services.AddHttpLogging(static options =>
 
 var serviceName = "grpc-service";
 var instanceId = $"{Environment.MachineName}-{Guid.NewGuid()}";
+
+builder.Logging
+    .ClearProviders()
+    .AddSimpleConsole(options =>
+    {
+        options.IncludeScopes = true;
+    })
+    .AddOpenTelemetry(options =>
+    {
+        options.IncludeScopes = true;
+        options.IncludeFormattedMessage = true;
+        options.ParseStateValues = true;
+
+        options.SetResourceBuilder(ResourceBuilder.CreateDefault()
+            .AddService(
+                serviceName: serviceName,
+                serviceInstanceId: instanceId
+            ));
+
+        options.AddOtlpExporter();
+    });
 
 builder.Services.AddOpenTelemetry()
     .ConfigureResource(x =>
