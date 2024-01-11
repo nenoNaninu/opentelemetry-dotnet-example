@@ -38,7 +38,10 @@ builder.Logging
                 serviceInstanceId: instanceId
             ));
 
-        options.AddOtlpExporter();
+        options.AddOtlpExporter(op =>
+        {
+            op.Endpoint = new Uri("http://otel-collector:4317");
+        });
     });
 
 builder.Services.AddOpenTelemetry()

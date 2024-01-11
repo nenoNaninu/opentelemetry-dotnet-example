@@ -1,13 +1,20 @@
 version: '3.4'
 
 services:
-  # webapi:
-  #   image: ${DOCKER_REGISTRY-}webapi
-  #   build:
-  #     context: .
-  #     dockerfile: src/WebApi/Dockerfile
-  #   depends_on:
-  #     - otel-collector
+  webapi:
+    image: ${DOCKER_REGISTRY-}webapi
+    build:
+      context: .
+      dockerfile: src/WebApi/Dockerfile
+    ports:
+      - "5149:5149"
+      - "7237:7237"
+    environment:
+      - ASPNETCORE_HTTP_PORTS=5149
+      - ASPNETCORE_HTTPS_PORTS=7237
+      - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      - otel-collector
       
   grpcservice:
     image: ${DOCKER_REGISTRY-}grpcservice
@@ -21,7 +28,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
 
   otel-collector:
-    image: otel/opentelemetry-collector-contrib:0.90.1
+    image: otel/opentelemetry-collector-contrib:0.92.0
     restart: always
     command: ["--config=/etc/otel-collector.yml"]
     volumes:

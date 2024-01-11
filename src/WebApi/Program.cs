@@ -33,7 +33,7 @@ builder.Services.AddSignalR(options =>
 builder.Services
     .AddGrpcClient<Greeter.GreeterClient>(options =>
     {
-        options.Address = new Uri("http://localhost:8080");
+        options.Address = new Uri("http://grpcservice:8080");
     });
 
 builder.Services.AddSingleton<IMessageRepository, MessageRepository>();
@@ -59,7 +59,10 @@ builder.Logging
                 serviceInstanceId: instanceId
             ));
 
-        options.AddOtlpExporter();
+        options.AddOtlpExporter(op =>
+        {
+            op.Endpoint = new Uri("http://otel-collector:4317");
+        });
     });
 
 builder.Services.AddOpenTelemetry()
@@ -90,8 +93,7 @@ builder.Services.AddOpenTelemetry()
             .AddOtlpExporter();
     });
 
-
-builder.Services.AddNpgsqlDataSource("Host=localhost;Port=5432;Username=postgres;Password=postgres;");
+builder.Services.AddNpgsqlDataSource("Host=postgres;Port=5432;Username=postgres;Password=postgres;");
 
 var app = builder.Build();
 
