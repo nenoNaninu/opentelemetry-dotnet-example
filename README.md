@@ -17,6 +17,8 @@ Visual Studio で docker-compose を選択して実行するのが簡単です�
 
 ![image](https://github.com/nenoNaninu/opentelemetry-dotnet-example/assets/27144255/ce9a562d-2efc-4d1e-963a-f9ff3069740f)
 
+あるいは CLI でも。
+
 ```
 $ docker compose build
 $ docker compose up
