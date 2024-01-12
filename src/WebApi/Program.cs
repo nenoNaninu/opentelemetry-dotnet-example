@@ -33,7 +33,7 @@ builder.Services.AddSignalR(options =>
 builder.Services
     .AddGrpcClient<Greeter.GreeterClient>(options =>
     {
-        options.Address = new Uri("http://localhost:8080");
+        options.Address = new Uri("http://grpcservice:8080");
     });
 
 builder.Services.AddSingleton<IMessageRepository, MessageRepository>();
