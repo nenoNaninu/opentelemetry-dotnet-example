@@ -8,6 +8,7 @@ services:
       dockerfile: src/WebApi/Dockerfile
     ports:
      - "5149:5149"
+     - "5150:5150"
     depends_on:
       - otel-collector
     environment:
