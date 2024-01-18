@@ -20,8 +20,8 @@ Visual Studio で docker-compose を選択して実行するのが簡単です�
 あるいは CLI でも。
 
 ```
-$ docker compose build
-$ docker compose up
+$ docker compose -f docker-compose.yml build
+$ docker compose -f docker-compose.yml up
 ```
 
 立ち上がった `WebApi.csproj` を雑に叩いてテレメトリデータを生成しましょう。
