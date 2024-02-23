@@ -91,7 +91,7 @@ builder.Services.AddOpenTelemetry()
     });
 
 
-builder.Services.AddNpgsqlDataSource("Host=localhost;Port=5432;Username=postgres;Password=postgres;");
+builder.Services.AddNpgsqlDataSource("Host=postgres;Port=5432;Username=postgres;Password=postgres;");
 
 var app = builder.Build();
 
